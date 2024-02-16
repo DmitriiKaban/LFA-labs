@@ -5,10 +5,6 @@
 
 ----
 
-## Theory
-If needed, but it should be written by the author in her/his words.
-
-
 ## Objectives:
 
 
