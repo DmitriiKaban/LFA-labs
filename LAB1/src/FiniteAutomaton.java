@@ -1,3 +1,5 @@
+import jdk.jfr.TransitionTo;
+
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -8,8 +10,10 @@ public class FiniteAutomaton {
     private Set<Character> alphabetSigma; // terminals
     private Set<Transition> transitions; // A -> aB, (A,a)=B, A->a, (A,a)=empty string
     private char startStateQ0; // start symbol
-    private final Character finalStateF = null; // empty string
+    private Character finalStateF; // empty string
 
+    public FiniteAutomaton() {
+    }
 
     public FiniteAutomaton(Grammar grammar) {
 
@@ -18,12 +22,14 @@ public class FiniteAutomaton {
         alphabetSigma = grammar.getTerminals();
         startStateQ0 = grammar.getStartSymbol();
         transitions = new HashSet<>();
+        finalStateF = null;
 
         Set<String> rules = grammar.getRules().keySet();
         for (String rule : rules) {
             List<String> transitionTo = grammar.getRules().get(rule);
 
             for (String transition : transitionTo) {
+
                 // A -> B
                 if (transition.length() == 1 && grammar.getNonTerminals().contains(transition.charAt(0))) {
                     transitions.add(new Transition(rule.charAt(0), null, transition.charAt(0)));
@@ -47,9 +53,24 @@ public class FiniteAutomaton {
         return checkString(string, currentState);
     }
 
+    public boolean isDeterministic() {
+
+        Set<String> fromAndWithSymbols = new HashSet<>();
+
+        for (Transition transition: transitions) {
+
+            String currentFromAndWith = transition.getFromState().toString() + transition.getWithSymbol().toString();
+            if (fromAndWithSymbols.contains(currentFromAndWith)) {
+                return false;
+            }
+            fromAndWithSymbols.add(currentFromAndWith);
+        }
+
+        return true;
+    }
+
     public boolean checkString(String string, Character currentState) {
 
-//        System.out.println("String: " + string + ", current state: " + currentState);
         if (string.isEmpty() && currentState == null) {
             return true;
         }
@@ -68,6 +89,30 @@ public class FiniteAutomaton {
         }
 
         return false;
+    }
+
+
+//    Variant 6
+//    Q = {q0,q1,q2,q3,q4},
+//            ∑ = {a,b},
+//    F = {q4},
+//    δ(q0,a) = q1,
+//    δ(q1,b) = q1,
+//    δ(q1,b) = q2,
+//    δ(q2,b) = q3,
+//    δ(q3,a) = q1,
+//    δ(q2,a) = q4.
+
+    public FiniteAutomaton convertToDFA() {
+
+        if (isDeterministic()) {
+            return this;
+        }
+
+        FiniteAutomaton dfa = new FiniteAutomaton();
+
+
+        return null;
     }
 
     public class Transition {
@@ -104,5 +149,40 @@ public class FiniteAutomaton {
 
     public Set<Transition> getTransitions() {
         return transitions;
+    }
+
+    public Set<Character> getStatesQ() {
+        return statesQ;
+    }
+
+    public void setStatesQ(Set<Character> statesQ) {
+        this.statesQ = statesQ;
+    }
+
+    public Set<Character> getAlphabetSigma() {
+        return alphabetSigma;
+    }
+
+    public void setAlphabetSigma(Set<Character> alphabetSigma) {
+        this.alphabetSigma = alphabetSigma;
+    }
+
+    public void setTransitions(Set<Transition> transitions) {
+        this.transitions = transitions;
+    }
+
+    public char getStartStateQ0() {
+        return startStateQ0;
+    }
+
+    public void setStartStateQ0(char startStateQ0) {
+        this.startStateQ0 = startStateQ0;
+    }
+    public void setFinalState(char finalState) {
+        this.finalStateF = finalState;
+    }
+
+    public Character getFinalStateF() {
+        return finalStateF;
     }
 }
