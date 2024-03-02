@@ -211,6 +211,10 @@ private void drawState(Graphics g, String state, Point position) {
         }
 ```
 
+Here is an example of visualization:
+
+![alt text](https://github.com/DmitriiKaban/LFA-labs/blob/master/LAB1/fa_graphical_representation.png)
+
 
 ## Conclusions and Results
 In this laboratory, I successfully implemented a Grammar class to represent formal grammar and performed various tasks
