@@ -3,9 +3,9 @@ import java.util.regex.Pattern;
 
 public class Grammar {
 
-    private Set<Character> nonTerminals;
-    private Set<Character> terminals;
-    private Character startSymbol;
+    private Set<String> nonTerminals;
+    private Set<String> terminals;
+    private String startSymbol;
     private Map<String, List<String>> rules;
 
     public Grammar() {
@@ -31,7 +31,7 @@ public class Grammar {
 
     public String generateString() {
 
-        List<Character> currentNonTerminals = new java.util.ArrayList<>(List.of(startSymbol));
+        List<String> currentNonTerminals = new java.util.ArrayList<>(List.of(startSymbol));
         StringBuilder result = new StringBuilder();
         StringBuilder transformations = new StringBuilder();
         result.append(startSymbol);
@@ -54,7 +54,7 @@ public class Grammar {
             currentNonTerminals.remove(randIndex);
             for (char c : valueToReplace.toCharArray()) {
                 if (nonTerminals.contains(c)) {
-                    currentNonTerminals.add(c);
+                    currentNonTerminals.add(String.valueOf(c));
                 }
             }
         }
@@ -147,35 +147,27 @@ public class Grammar {
         return "TYPE I";
     }
 
-    public void setNonTerminals(Set<Character> s) {
-        nonTerminals = s;
-    }
-
-    public void setTerminals(Set<Character> s) {
-        terminals = s;
-    }
-
-    public void setRules(HashMap<String, List<String>> rules) {
-        this.rules = rules;
-    }
-
-    public void setStartSymbol(char s) {
-        this.startSymbol = s;
-    }
-
-    public Set<Character> getNonTerminals() {
+    public Set<String> getNonTerminals() {
         return nonTerminals;
     }
 
-    public Set<Character> getTerminals() {
+    public void setNonTerminals(Set<String> nonTerminals) {
+        this.nonTerminals = nonTerminals;
+    }
+
+    public Set<String> getTerminals() {
         return terminals;
     }
 
-    public Character getStartSymbol() {
+    public void setTerminals(Set<String> terminals) {
+        this.terminals = terminals;
+    }
+
+    public String getStartSymbol() {
         return startSymbol;
     }
 
-    public void setStartSymbol(Character startSymbol) {
+    public void setStartSymbol(String startSymbol) {
         this.startSymbol = startSymbol;
     }
 

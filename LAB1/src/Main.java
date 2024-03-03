@@ -11,17 +11,30 @@ public class Main {
 
     private static void lab2() {
         // TODO: Implement some functionality that would convert an NDFA to a DFA
-        FiniteAutomaton lab2FA = initiateAutomaton();
-        // 2-nd task
-        Grammar grammarLab2 = new Grammar(lab2FA);
-        // 1-st task
-        System.out.println(grammarLab2.getChomskyType());
-        // 3-rd task
-        System.out.println("Is determenistic: " + lab2FA.isDeterministic());
-        // 4-th task
-        FiniteAutomaton dfa = lab2FA.convertToDFA();
-        // 5-th task
-        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(lab2FA));
+//        FiniteAutomaton lab2FA = initiateAutomaton();
+//        // 2-nd task
+//        Grammar grammarLab2 = new Grammar(lab2FA);
+//        // 1-st task
+//        System.out.println(grammarLab2.getChomskyType());
+//        // 3-rd task
+//        System.out.println("Is determenistic: " + lab2FA.isDeterministic());
+//        // 4-th task
+//        FiniteAutomaton dfa = lab2FA.convertToDFA();
+//        // 5-th task
+//        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(lab2FA));
+
+
+
+        Grammar myGrammar = initiateGrammar();
+        FiniteAutomaton myAutomaton = new FiniteAutomaton(myGrammar);
+        System.out.println(myAutomaton.getTransitions());
+        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(myAutomaton));
+        FiniteAutomaton dfa = myAutomaton.convertToDFA();
+        System.out.println(dfa.getStatesQ());
+        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(dfa));
+
+        FiniteAutomaton fa = initiateAutomaton();
+        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(fa));
 
     }
 
@@ -44,11 +57,11 @@ public class Main {
     private static Grammar initiateGrammar() {
 
         Grammar myGrammar = new Grammar();
-        Set<Character> characters = new HashSet<>(List.of('S', 'I', 'J', 'K'));
+        Set<String> characters = new HashSet<>(List.of("S", "I", "J", "K"));
         myGrammar.setNonTerminals(characters);
-        characters = new HashSet<>(List.of('a', 'b', 'c', 'e', 'n', 'f', 'm'));
+        characters = new HashSet<>(List.of("a", "b", "c", "e", "n", "f", "m"));
         myGrammar.setTerminals(characters);
-        myGrammar.setStartSymbol('S');
+        myGrammar.setStartSymbol("S");
         HashMap<String, List<String>> rules = new HashMap<>();
         rules.put("S", List.of("cI"));
         rules.put("I", List.of("bJ", "fI", "eK", "e"));
@@ -64,26 +77,22 @@ public class Main {
 
         Set<String> states = new HashSet<>(List.of("q0", "q1", "q2", "q3", "q4"));
 
-        Map<String, Character> statesDictionary = new HashMap<>();
-        for (int i = 0; i < states.size(); i++) {
-            statesDictionary.put("q" + i, (char) ('A' + i));
-        }
-
         Set<FiniteAutomaton.Transition> transitions = new HashSet<>();
         FiniteAutomaton finiteAutomaton = new FiniteAutomaton();  // Create an instance of FiniteAutomaton
 
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q0"), 'a', statesDictionary.get("q1")));
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q1"), 'a', statesDictionary.get("q1")));
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q1"), 'b', statesDictionary.get("q2")));
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q2"), 'b', statesDictionary.get("q3")));
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q3"), 'b', statesDictionary.get("q1")));
-        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q2"), 'a', statesDictionary.get("q4")));
+        transitions.add(finiteAutomaton.new Transition("q0", "a", "q1"));
+        transitions.add(finiteAutomaton.new Transition("q1", "a", "q1"));
+        transitions.add(finiteAutomaton.new Transition("q1", "b", "q2"));
+        transitions.add(finiteAutomaton.new Transition("q2", "b", "q3"));
+        transitions.add(finiteAutomaton.new Transition("q3", "b", "q1"));
+        transitions.add(finiteAutomaton.new Transition("q2", "a", "q4"));
 
-        finiteAutomaton.setFinalState(statesDictionary.get("q4"));
-        finiteAutomaton.setStatesQ(states.stream().map(statesDictionary::get).collect(Collectors.toSet()));
-        finiteAutomaton.setAlphabetSigma(new HashSet<>(List.of('a', 'b')));
+        finiteAutomaton.setFinalStateF("q4");
+        finiteAutomaton.setStatesQ(states);
+        finiteAutomaton.setAlphabetSigma(new HashSet<>(List.of("a", "b")));
         finiteAutomaton.setTransitions(transitions);
-        finiteAutomaton.setStartStateQ0(statesDictionary.get("q0"));
+        finiteAutomaton.setStartStateQ0("q0");
+
 
         return finiteAutomaton;
     }

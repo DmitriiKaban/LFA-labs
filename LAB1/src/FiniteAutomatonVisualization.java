@@ -42,7 +42,13 @@ public class FiniteAutomatonVisualization extends JFrame {
         }
 
         private void drawState(Graphics g, String state, Point position) {
-            g.setColor(Color.PINK);
+            if (state.contains("FINAL")) {
+                g.setColor(Color.RED);
+            } else if (state.contains("S")) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.ORANGE);
+            }
             g.fillOval(position.x - 20, position.y - 20, 40, 40);
             g.setColor(Color.BLACK);
             g.drawOval(position.x - 20, position.y - 20, 40, 40);
@@ -141,7 +147,7 @@ public class FiniteAutomatonVisualization extends JFrame {
 
     public class AutomatonLayout {
 
-        public Map<String, Point> generateLayout(Set<Character> states) {
+        public Map<String, Point> generateLayout(Set<String> states) {
             Map<String, Point> statePositions = new HashMap<>();
 
             int radius = 100;
@@ -151,11 +157,11 @@ public class FiniteAutomatonVisualization extends JFrame {
             double angle = 0;
             double angleIncrement = 2 * Math.PI / states.size();
 
-            for (Character state : states) {
+            for (String state : states) {
                 if (state != null) {
                     int x = (int) (centerX + radius * Math.cos(angle));
                     int y = (int) (centerY + radius * Math.sin(angle));
-                    statePositions.put(String.valueOf(state), new Point(x, y));
+                    statePositions.put(state, new Point(x, y));
                     angle += angleIncrement;
                 }
             }
