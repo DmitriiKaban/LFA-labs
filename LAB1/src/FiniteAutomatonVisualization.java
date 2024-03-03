@@ -49,9 +49,15 @@ public class FiniteAutomatonVisualization extends JFrame {
             } else {
                 g.setColor(Color.ORANGE);
             }
-            g.fillOval(position.x - 20, position.y - 20, 40, 40);
+            int width = 40, height = 40;
+
+//            if (state.contains("FINAL")) {
+//                width *= 1.4;
+//                height *= 1.4;
+//            }
+            g.fillOval(position.x - 20, position.y - 20, width, height);
             g.setColor(Color.BLACK);
-            g.drawOval(position.x - 20, position.y - 20, 40, 40);
+            g.drawOval(position.x - 20, position.y - 20, width, height);
             g.drawString(state, position.x - 5, position.y + 5);
         }
 
