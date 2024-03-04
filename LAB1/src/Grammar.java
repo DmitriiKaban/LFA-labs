@@ -20,11 +20,11 @@ public class Grammar {
 
         for (FiniteAutomaton.Transition t : fa.getTransitions()) {
 
-            String toState = t.getToState() == null ? "" : t.getToState().toString();
-            if (rules.containsKey(t.getFromState().toString())) {
-                rules.get(t.getFromState().toString()).add(t.getWithSymbol().toString() + toState);
+            String toState = t.getToState() == null ? "" : t.getToState();
+            if (rules.containsKey(t.getFromState())) {
+                rules.get(t.getFromState()).add(t.getWithSymbol() + toState);
             } else {
-                rules.put(t.getFromState().toString(), new ArrayList<>(List.of(t.getWithSymbol().toString() + toState)));
+                rules.put(t.getFromState(), new ArrayList<>(List.of(t.getWithSymbol() + toState)));
             }
         }
     }
@@ -42,10 +42,10 @@ public class Grammar {
 
             int randIndex = rand.nextInt(currentNonTerminals.size());
 
-            int placeToReplace = result.indexOf(currentNonTerminals.get(randIndex).toString());
+            int placeToReplace = result.indexOf(currentNonTerminals.get(randIndex));
 
-            int randIndexToReplace = rand.nextInt(rules.get(currentNonTerminals.get(randIndex).toString()).size());
-            String valueToReplace = rules.get(currentNonTerminals.get(randIndex).toString()).get(randIndexToReplace);
+            int randIndexToReplace = rand.nextInt(rules.get(currentNonTerminals.get(randIndex)).size());
+            String valueToReplace = rules.get(currentNonTerminals.get(randIndex)).get(randIndexToReplace);
 
             result.replace(placeToReplace, placeToReplace + 1, valueToReplace);
 
@@ -99,21 +99,24 @@ public class Grammar {
             List<String> toState = rules.get(fromState);
             for (String s : toState) {
 
+                String state = s.replace("FINAL", "");
                 currentValue = false;
+                System.out.println(s);
 
                 // check A-> aB
-                if (!Pattern.matches(type3RightHandRule.pattern(), s) && s.length() > 1) {
+                if (!Pattern.matches(type3RightHandRule.pattern(), state) && state.length() > 1) {
                     rightHandRule = false;
                     currentValue = true;
                 }
+
                 // check A-> Ba
-                if (!Pattern.matches(type3LeftHandRule.pattern(), s) && s.length() > 1) {
+                if (!Pattern.matches(type3LeftHandRule.pattern(), state) && state.length() > 1) {
                     leftHandRule = false;
                     currentValue = true;
                 }
 
                 // check A->a
-                if (s.length() == 1) {
+                if (state.length() == 1) {
                     currentValue = true;
                 }
 
@@ -126,6 +129,7 @@ public class Grammar {
         if ((rightHandRule && !leftHandRule) || (leftHandRule && !rightHandRule))
             if (currentValue)
                 return "TYPE III";
+
 
 
         Pattern secondTypePattern = Pattern.compile("([a-z]+)?([A-Z]+)?([a-z]+)?");

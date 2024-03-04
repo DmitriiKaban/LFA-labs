@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
 
-        //lab1();
+//        lab1();
         lab2();
     }
 
@@ -26,6 +26,7 @@ public class Main {
 
 
         Grammar myGrammar = initiateGrammar();
+        System.out.println(myGrammar.getChomskyType());
         FiniteAutomaton myAutomaton = new FiniteAutomaton(myGrammar);
         System.out.println(myAutomaton.getTransitions());
         SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(myAutomaton));
@@ -35,6 +36,7 @@ public class Main {
 
         FiniteAutomaton fa = initiateAutomaton();
         SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(fa));
+        System.out.println(new Grammar(fa).getChomskyType());
 
     }
 
@@ -45,13 +47,13 @@ public class Main {
         myGrammar = new Grammar(myAutomaton);
         myAutomaton = new FiniteAutomaton(myGrammar);
 
-        testGrammar(myGrammar, myAutomaton);
+//        testGrammar(myGrammar, myAutomaton);
 
         System.out.println(myGrammar.getChomskyType());
 
-        System.out.println(myGrammar.getRules());
+//        System.out.println(myGrammar.getRules());
         myGrammar = new Grammar(myAutomaton);
-        System.out.println(myGrammar.getRules());
+//        System.out.println(myGrammar.getRules());
     }
 
     private static Grammar initiateGrammar() {
@@ -74,25 +76,28 @@ public class Main {
 
     private static FiniteAutomaton initiateAutomaton() {
 
-
         Set<String> states = new HashSet<>(List.of("q0", "q1", "q2", "q3", "q4"));
+
+        Map<String, String> statesDictionary = new HashMap<>();
+        for (int i = 0; i < states.size(); i++) {
+            statesDictionary.put("q" + i, ((char) ('A' + i)) + "");
+        }
 
         Set<FiniteAutomaton.Transition> transitions = new HashSet<>();
         FiniteAutomaton finiteAutomaton = new FiniteAutomaton();  // Create an instance of FiniteAutomaton
 
-        transitions.add(finiteAutomaton.new Transition("q0", "a", "q1"));
-        transitions.add(finiteAutomaton.new Transition("q1", "a", "q1"));
-        transitions.add(finiteAutomaton.new Transition("q1", "b", "q2"));
-        transitions.add(finiteAutomaton.new Transition("q2", "b", "q3"));
-        transitions.add(finiteAutomaton.new Transition("q3", "b", "q1"));
-        transitions.add(finiteAutomaton.new Transition("q2", "a", "q4"));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q0"), "a", statesDictionary.get("q1")));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q1"), "a", statesDictionary.get("q1")));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q1"), "b", statesDictionary.get("q2")));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q2"), "b", statesDictionary.get("q3")));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q3"), "b", statesDictionary.get("q1")));
+        transitions.add(finiteAutomaton.new Transition(statesDictionary.get("q2"), "a", statesDictionary.get("q4")));
 
-        finiteAutomaton.setFinalStateF("q4");
-        finiteAutomaton.setStatesQ(states);
+        finiteAutomaton.setFinalStateF(statesDictionary.get("q4"));
+        finiteAutomaton.setStatesQ(states.stream().map(statesDictionary::get).collect(Collectors.toSet()));
         finiteAutomaton.setAlphabetSigma(new HashSet<>(List.of("a", "b")));
         finiteAutomaton.setTransitions(transitions);
-        finiteAutomaton.setStartStateQ0("q0");
-
+        finiteAutomaton.setStartStateQ0(statesDictionary.get("q0"));
 
         return finiteAutomaton;
     }

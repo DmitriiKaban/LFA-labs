@@ -1,6 +1,7 @@
 import jdk.jfr.TransitionTo;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FiniteAutomaton {
@@ -9,7 +10,7 @@ public class FiniteAutomaton {
     private Set<String> alphabetSigma; // terminals
     private Set<Transition> transitions; // A -> aB, (A,a)=B, A->a, (A,a)=empty string
     private String startStateQ0; // start symbol
-    private String finalStateF; // empty string
+    private String finalStateF;
 
     public FiniteAutomaton() {
     }
@@ -27,8 +28,10 @@ public class FiniteAutomaton {
         for (String currentFrom : fromStates) {
 
             List<String> transitionTo = grammar.getRules().get(currentFrom);
+            Pattern secondTypePattern = Pattern.compile("([a-z]+)?([A-Z]+)?([a-z]+)?");
 
             for (String withAndTo : transitionTo) {
+
                 String fromState = currentFrom.charAt(0) + "";
 
                 if (withAndTo.length() == 1 && grammar.getNonTerminals().contains(withAndTo.charAt(0) + "")) {
@@ -44,9 +47,12 @@ public class FiniteAutomaton {
                     String withSymbol = withAndTo.charAt(0) + "";
                     String toState = withAndTo.charAt(1) + "";
                     transitions.add(new Transition(fromState, withSymbol, toState));
-                } else if (withAndTo.length() == 0) {
+                } else if (withAndTo.isEmpty()) {
                     // A -> ε (epsilon)
                     transitions.add(new Transition(fromState, null, null));
+                } else if (Pattern.matches(secondTypePattern.pattern(), withAndTo)) {
+                    // A -> aBc
+                    transitions.add(new Transition(fromState, withAndTo.charAt(0) + "", withAndTo.charAt(1) + ""));
                 }
             }
         }
