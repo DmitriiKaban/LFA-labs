@@ -1,12 +1,31 @@
+import lexer.CustomLexer;
+import lexer.Token;
+
 import javax.swing.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
 
 //        lab1();
-        lab2();
+//        lab2();
+        lab3();
+    }
+
+    private static void lab3() {
+
+        String code = "RealMadrid a = 5;" +
+                " b = 9; " +
+                "Chelsea c = 15;";
+        CustomLexer lexer = new CustomLexer();
+        List<Token> tokens = lexer.lex(code);
+
+        // Print the recognized tokens
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
     }
 
     private static void lab2() {
@@ -26,12 +45,9 @@ public class Main {
 
 
         Grammar myGrammar = initiateGrammar();
-        System.out.println(myGrammar.getChomskyType());
         FiniteAutomaton myAutomaton = new FiniteAutomaton(myGrammar);
-        System.out.println(myAutomaton.getTransitions());
         SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(myAutomaton));
         FiniteAutomaton dfa = myAutomaton.convertToDFA();
-        System.out.println(dfa.getStatesQ());
         SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(dfa));
 
         FiniteAutomaton fa = initiateAutomaton();
