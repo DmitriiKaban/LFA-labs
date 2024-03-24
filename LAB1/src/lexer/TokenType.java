@@ -5,5 +5,9 @@ enum TokenType {
     VARIABLE,
     EQUALS,
     VALUE,
-    SEMICOLON
+    SEMICOLON,
+    PLUS,
+    MINUS,
+    MULTIPLY,
+    DIVIDE
 }

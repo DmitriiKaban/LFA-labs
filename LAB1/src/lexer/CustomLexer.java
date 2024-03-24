@@ -41,6 +41,8 @@ public class CustomLexer {
                     lineTokens.add(new Token(TokenType.VALUE, match));
                 } else if (semicolonPattern.matcher(match).matches()) {
                     lineTokens.add(new Token(TokenType.SEMICOLON, match));
+                } else if (isOperation(match)) {
+                    lineTokens.add(new Token(getOperationType(match), match));
                 } else {
                     throw new RuntimeException("Unrecognized token '" + match + "' in line " + lineNumber);
                 }
@@ -57,24 +59,62 @@ public class CustomLexer {
             lineNumber++;
         }
 
+
         return tokens;
+    }
+
+    private static boolean isOperation(String token) {
+        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
+    }
+
+    private static TokenType getOperationType(String token) {
+        switch (token) {
+            case "+":
+                return TokenType.PLUS;
+            case "-":
+                return TokenType.MINUS;
+            case "*":
+                return TokenType.MULTIPLY;
+            case "/":
+                return TokenType.DIVIDE;
+            default:
+                throw new IllegalArgumentException("Invalid operation token: " + token);
+        }
     }
 
     private static Pattern getCombinedPattern(List<String> validTypes) {
         String validTypesRegex = String.join("|", validTypes);
-        String combinedRegex = "\\b(" + validTypesRegex + ")\\b|[A-Za-z][a-zA-Z]*|=|\\b\\d+\\b|;";
+        String combinedRegex = "\\b(" + validTypesRegex + ")\\b|[A-Za-z][a-zA-Z]*|=|\\b\\d+\\b|[\\-+*/]|;";
         return Pattern.compile(combinedRegex);
     }
 
+
     private static boolean isValidStructure(List<Token> tokens) {
-        // Check if the token sequence represents a valid structure: type varName = varValue;
-        return tokens.size() == 5 &&
+        // Check if it's the first structure: TYPE NAME = VALUE;
+        if (tokens.size() == 5 &&
                 tokens.get(0).getType() == TokenType.TYPE &&
                 tokens.get(1).getType() == TokenType.VARIABLE &&
                 tokens.get(2).getType() == TokenType.EQUALS &&
                 tokens.get(3).getType() == TokenType.VALUE &&
-                tokens.get(4).getType() == TokenType.SEMICOLON;
+                tokens.get(4).getType() == TokenType.SEMICOLON) {
+            return true;
+        }
+
+            // Check if it's the second structure: NAME + VALUE;
+        return (tokens.size() == 4 &&
+                (tokens.get(0).getType() == TokenType.VARIABLE || tokens.get(0).getType() == TokenType.VALUE) &&
+                (tokens.get(1).getType() == TokenType.PLUS ||
+                        tokens.get(1).getType() == TokenType.MINUS ||
+                        tokens.get(1).getType() == TokenType.MULTIPLY ||
+                        tokens.get(1).getType() == TokenType.DIVIDE) &&
+                (tokens.get(2).getType() == TokenType.VARIABLE || tokens.get(2).getType() == TokenType.VALUE) &&
+                tokens.get(3).getType() == TokenType.SEMICOLON);
+
+        // Otherwise, it's an invalid structure
     }
+
+
+
 
     private static String getMissingPart(List<Token> tokens) {
         StringBuilder missingPart = new StringBuilder(" Token(s) missing: ");
@@ -119,5 +159,110 @@ public class CustomLexer {
         result += incorrectPlaceTokens.toString().endsWith(": ") ? "" : incorrectPlaceTokens + ".";
         return result;
     }
+
+    public static void evaluateAndPrint(String code) {
+        CustomLexer lexer = new CustomLexer();
+        List<Token> tokens = lexer.lex(code);
+
+        int result = 0;
+
+        for (int i = 0; i < tokens.size(); i++) {
+            Token currentToken = tokens.get(i);
+            if (currentToken.getType() == TokenType.VARIABLE && i < tokens.size() - 2 &&
+                    tokens.get(i + 1).getType() == TokenType.EQUALS &&
+                    (tokens.get(i + 2).getType() == TokenType.VALUE || tokens.get(i + 2).getType() == TokenType.VARIABLE)) {
+                // Found an assignment
+                i += 2; // Skip to the next expression after assignment
+            } else if (currentToken.getType() == TokenType.VARIABLE || currentToken.getType() == TokenType.VALUE) {
+                // Found an operand
+                int operand1;
+                if (currentToken.getType() == TokenType.VALUE) {
+                    operand1 = Integer.parseInt(currentToken.getValue());
+                } else {
+                    // If it's a variable, retrieve its value
+                    operand1 = getValueOfVariable(currentToken.getValue(), tokens);
+                }
+                Token operatorToken = tokens.get(++i); // Move to the operator
+                int operand2;
+                if (tokens.get(++i).getType() == TokenType.VALUE) {
+                    operand2 = Integer.parseInt(tokens.get(i).getValue()); // Next token is the second operand
+                } else {
+                    // If it's a variable, retrieve its value
+                    operand2 = getValueOfVariable(tokens.get(i).getValue(), tokens);
+                }
+                switch (operatorToken.getType()) {
+                    case PLUS:
+                        result = operand1 + operand2;
+                        break;
+                    case MINUS:
+                        result = operand1 - operand2;
+                        break;
+                    case MULTIPLY:
+                        result = operand1 * operand2;
+                        break;
+                    case DIVIDE:
+                        if (operand2 != 0) {
+                            result = operand1 / operand2;
+                        } else {
+                            throw new IllegalArgumentException("Division by zero is not allowed");
+                        }
+                        break;
+                }
+                System.out.println("Result of expression: " + result);
+            }
+        }
+    }
+
+    private static int getValueOfVariable(String variableName, List<Token> tokens) {
+        for (Token token : tokens) {
+            if (token.getType() == TokenType.VARIABLE && token.getValue().equals(variableName)) {
+                // Return the value of the variable
+                return Integer.parseInt(tokens.get(tokens.indexOf(token) + 2).getValue());
+            }
+        }
+        throw new IllegalArgumentException("Variable '" + variableName + "' not found");
+    }
+
+
+    private static int evaluateExpression(Token variableToken, Token operatorToken, List<Token> tokens) {
+
+        int startIndex = tokens.indexOf(variableToken) + 2;
+        int endIndex = tokens.indexOf(operatorToken) - 1;
+
+        StringBuilder expressionBuilder = new StringBuilder();
+        for (int i = startIndex; i <= endIndex; i++) {
+            expressionBuilder.append(tokens.get(i).getValue());
+        }
+        String expression = expressionBuilder.toString();
+
+        // Evaluate the expression
+        String[] parts = expression.split("[-+*/]");
+        int operand1 = Integer.parseInt(parts[0].trim());
+        int operand2 = Integer.parseInt(parts[1].trim());
+        int result = 0;
+
+        char operator = expression.replaceAll("[\\d\\s]", "").charAt(0);
+        switch (operator) {
+            case '+':
+                result = operand1 + operand2;
+                break;
+            case '-':
+                result = operand1 - operand2;
+                break;
+            case '*':
+                result = operand1 * operand2;
+                break;
+            case '/':
+                if (operand2 != 0) {
+                    result = operand1 / operand2;
+                } else {
+                    throw new IllegalArgumentException("Division by zero is not allowed");
+                }
+                break;
+        }
+
+        return result;
+    }
+
 
 }

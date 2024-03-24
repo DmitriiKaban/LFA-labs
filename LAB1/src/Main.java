@@ -17,10 +17,17 @@ public class Main {
     private static void lab3() {
 
         String code = "RealMadrid a = 5;" +
-                " b = 9; " +
-                "Chelsea c = 15;";
+                "RealMadrid b = 9; " +
+                "Chelsea c = 15;" +
+                "a + 2;" +
+                "c - b;" +
+                "a * b;" +
+                "a - b;";
         CustomLexer lexer = new CustomLexer();
         List<Token> tokens = lexer.lex(code);
+
+
+        CustomLexer.evaluateAndPrint(code);
 
         // Print the recognized tokens
         for (Token token : tokens) {
