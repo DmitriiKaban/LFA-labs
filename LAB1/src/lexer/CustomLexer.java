@@ -11,16 +11,14 @@ public class CustomLexer {
     public static List<Token> lex(String code) {
         List<Token> tokens = new ArrayList<>();
 
-        // Define valid types
+
         List<String> validTypes = List.of("Barcelona", "RealMadrid", "Chelsea");
 
-        // Define regex patterns for the tokens
         Pattern variablePattern = Pattern.compile("\\b[a-z][a-zA-Z]*\\b");
         Pattern equalsPattern = Pattern.compile("=");
         Pattern valuePattern = Pattern.compile("\\b\\d+\\b");
         Pattern semicolonPattern = Pattern.compile(";");
 
-        // Split the input code into lines
         String[] lines = code.split("(?<=;)");
 
         int lineNumber = 1;
@@ -100,7 +98,6 @@ public class CustomLexer {
             return true;
         }
 
-            // Check if it's the second structure: NAME + VALUE;
         return (tokens.size() == 4 &&
                 (tokens.get(0).getType() == TokenType.VARIABLE || tokens.get(0).getType() == TokenType.VALUE) &&
                 (tokens.get(1).getType() == TokenType.PLUS ||
@@ -109,11 +106,7 @@ public class CustomLexer {
                         tokens.get(1).getType() == TokenType.DIVIDE) &&
                 (tokens.get(2).getType() == TokenType.VARIABLE || tokens.get(2).getType() == TokenType.VALUE) &&
                 tokens.get(3).getType() == TokenType.SEMICOLON);
-
-        // Otherwise, it's an invalid structure
     }
-
-
 
 
     private static String getMissingPart(List<Token> tokens) {
@@ -171,15 +164,12 @@ public class CustomLexer {
             if (currentToken.getType() == TokenType.VARIABLE && i < tokens.size() - 2 &&
                     tokens.get(i + 1).getType() == TokenType.EQUALS &&
                     (tokens.get(i + 2).getType() == TokenType.VALUE || tokens.get(i + 2).getType() == TokenType.VARIABLE)) {
-                // Found an assignment
-                i += 2; // Skip to the next expression after assignment
+                i += 2;
             } else if (currentToken.getType() == TokenType.VARIABLE || currentToken.getType() == TokenType.VALUE) {
-                // Found an operand
                 int operand1;
                 if (currentToken.getType() == TokenType.VALUE) {
                     operand1 = Integer.parseInt(currentToken.getValue());
                 } else {
-                    // If it's a variable, retrieve its value
                     operand1 = getValueOfVariable(currentToken.getValue(), tokens);
                 }
                 Token operatorToken = tokens.get(++i); // Move to the operator
@@ -187,7 +177,7 @@ public class CustomLexer {
                 if (tokens.get(++i).getType() == TokenType.VALUE) {
                     operand2 = Integer.parseInt(tokens.get(i).getValue()); // Next token is the second operand
                 } else {
-                    // If it's a variable, retrieve its value
+
                     operand2 = getValueOfVariable(tokens.get(i).getValue(), tokens);
                 }
                 switch (operatorToken.getType()) {
@@ -216,7 +206,7 @@ public class CustomLexer {
     private static int getValueOfVariable(String variableName, List<Token> tokens) {
         for (Token token : tokens) {
             if (token.getType() == TokenType.VARIABLE && token.getValue().equals(variableName)) {
-                // Return the value of the variable
+
                 return Integer.parseInt(tokens.get(tokens.indexOf(token) + 2).getValue());
             }
         }

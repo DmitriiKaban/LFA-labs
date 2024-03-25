@@ -3,7 +3,6 @@ import lexer.Token;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -17,7 +16,7 @@ public class Main {
     private static void lab3() {
 
         String code = "RealMadrid a = 5;" +
-                "RealMadrid b = 9; " +
+                "RealMadrid  9; " +
                 "Chelsea c = 15;" +
                 "a + 2;" +
                 "c - b;" +
