@@ -10,7 +10,101 @@ public class Main {
 
 //        lab1();
 //        lab2();
-        lab3();
+//        lab3();
+        lab4();
+    }
+
+    private static void lab4() {
+
+        String re1 = "M?N^2(O|P)^3Q*R+";
+        String re2 = "(X|Y|Z)^38+(9|0)^2";
+        String re3 = "(H|i)(J|K)L*N?";
+
+
+        System.out.println("====1====");
+        for (int i = 0; i < 1; i++) {
+            stringByRegexGenerator(re1);
+            System.out.println();
+        }
+
+        System.out.println("====2====");
+        for (int i = 0; i < 5; i++){
+            stringByRegexGenerator(re2);
+            System.out.println();
+        }
+
+        System.out.println("====3====");
+        for (int i = 0; i < 5; i++){
+            stringByRegexGenerator(re3);
+            System.out.println();
+        }
+
+    }
+
+    public static void stringByRegexGenerator(String regex) {
+
+        StringBuilder result = new StringBuilder();
+        Random r = new Random();
+        int c;
+
+        for (int i = 0; i < regex.length(); i++) {
+
+            StringBuilder currentBuilder = new StringBuilder();
+            c = i;
+            char ch = regex.charAt(i);
+            Set<Character> chars = new HashSet<>();
+
+            if (Character.isLetter(ch) || Character.isDigit(ch)) {
+                if (regex.length() > i + 1 && regex.charAt(i + 1) == '^') {
+                    int power = Integer.parseInt(regex.charAt(i + 2) + "");
+
+                    currentBuilder.append(String.valueOf(ch).repeat(Math.max(0, power)));
+                    i += 2;
+                } else if (regex.length() > i + 1 && regex.charAt(i + 1) == '*') {
+
+                    currentBuilder.append(String.valueOf(ch).repeat(r.nextInt(5)));
+                    i++;
+                } else if (regex.length() > i + 1 && regex.charAt(i + 1) == '+') {
+
+                    currentBuilder.append(String.valueOf(ch).repeat(r.nextInt(1, 5)));
+                    i++;
+                } else if (regex.length() > i + 1 && regex.charAt(i + 1) == '?') {
+
+                    if (r.nextBoolean()) {
+                        currentBuilder.append(ch);
+                    }
+                    i++;
+                }
+            }
+
+            if (ch == '(') {
+                char nextCh = regex.charAt(i + 1);
+                while (nextCh != ')') {
+                    if (nextCh != '|') {
+                        chars.add(nextCh);
+                    }
+                    nextCh = regex.charAt(i + 1);
+                    i++;
+                }
+
+                if (regex.length() > i + 1 && regex.charAt(i + 1) == '^') {
+
+                    int power = Integer.parseInt(regex.charAt(i + 2) + "");
+
+                    for (int j = 0; j < power; j++) {
+                        currentBuilder.append(chars.stream().toList().get(r.nextInt(chars.size())));
+                    }
+                    i += 2;
+                } else {
+                    currentBuilder.append(chars.stream().toList().get(r.nextInt(chars.size())));
+                }
+            }
+
+            System.out.println(regex.substring(c, i + 1) + " -> " + currentBuilder.toString());
+            result.append(currentBuilder);
+        }
+
+        System.out.println(result);
     }
 
     private static void lab3() {
@@ -47,7 +141,6 @@ public class Main {
 //        FiniteAutomaton dfa = lab2FA.convertToDFA();
 //        // 5-th task
 //        SwingUtilities.invokeLater(() -> new FiniteAutomatonVisualization(lab2FA));
-
 
 
         Grammar myGrammar = initiateGrammar();
