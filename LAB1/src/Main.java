@@ -11,7 +11,31 @@ public class Main {
 //        lab1();
 //        lab2();
 //        lab3();
-        lab4();
+//        lab4();
+        lab5();
+    }
+
+    private static void lab5() {
+
+        Grammar myGrammar = new Grammar();
+        Set<String> characters = new HashSet<>(List.of("S", "A", "B", "C", "E"));
+        myGrammar.setNonTerminals(characters);
+        characters = new HashSet<>(List.of("a", "b"));
+        myGrammar.setTerminals(characters);
+        myGrammar.setStartSymbol("S");
+        HashMap<String, List<String>> rules = new HashMap<>();
+        rules.put("S", List.of("aB", "AC"));
+        rules.put("A", List.of("a", "ASC", "BC"));
+        rules.put("B", List.of("b", "bS"));
+        rules.put("C", List.of("", "BA"));
+        rules.put("E", List.of("bB"));
+
+        myGrammar.setRules(rules);
+
+        myGrammar = new ChomskyNormalForm(myGrammar);
+        ChomskyNormalForm chomskyNormalForm = new ChomskyNormalForm(myGrammar);
+        chomskyNormalForm.convertToCNF();
+        System.out.println(chomskyNormalForm.getRules());
     }
 
     private static void lab4() {
@@ -22,7 +46,7 @@ public class Main {
 
 
         System.out.println("====1====");
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 5; i++) {
             stringByRegexGenerator(re1);
             System.out.println();
         }
