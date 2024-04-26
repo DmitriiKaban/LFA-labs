@@ -1,11 +1,13 @@
-
-import lexer.ASTNode;
+import lexer.AstNode;
 import lexer.CustomLexer;
 import lexer.Token;
 
 import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static lexer.CustomAstBuilder.buildAst;
+import static lexer.CustomAstBuilder.printAst;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,34 +21,19 @@ public class Main {
     }
 
     private static void lab6() {
-        String code1 = "RealMadrid myVariable = 10;";
-        String code2 = "myVariable + 20;";
 
-        System.out.println("Input Code:");
-        System.out.println(code1);
+        String code = "RealMadrid a = 5;" +
+                "RealMadrid b =  9; " +
+                "Chelsea c = 15;" +
+                "a + 2;" +
+                "c - b;" +
+                "a * b;" +
+                "Barcelona d = 10;" +
+                "a - b;";
 
-        List<Token> tokens1 = CustomLexer.lex(code1);
-        ASTNode ast1 = ast.ASTBuilder.buildAST(tokens1);
-        System.out.println("AST:");
-        printAST(ast1);
-        System.out.println();
-
-        System.out.println("Input Code:");
-        System.out.println(code2);
-        List<Token> tokens2 = CustomLexer.lex(code2);
-        ASTNode ast2 = ast.ASTBuilder.buildAST(tokens2);
-        System.out.println("AST:");
-        printAST(ast2);
-    }
-
-    private static void printAST(ASTNode node) {
-        if (node == null) {
-            return;
-        }
-
-        System.out.println(node);
-        printAST(node.getLeftChild());
-        printAST(node.getRightChild());
+        List<Token> tokens = CustomLexer.lex(code);
+        AstNode ast = buildAst(tokens);
+        printAst(ast, 0);
     }
 
     private static void lab5() {

@@ -85,22 +85,22 @@ public class CustomLexer {
     private static boolean isValidStructure(List<Token> tokens) {
         // Check if it's the first structure: TYPE NAME = VALUE;
         if (tokens.size() == 5 &&
-                tokens.get(0).getType() == TokenType.TYPE &&
-                tokens.get(1).getType() == TokenType.VARIABLE &&
-                tokens.get(2).getType() == TokenType.EQUALS &&
-                tokens.get(3).getType() == TokenType.VALUE &&
-                tokens.get(4).getType() == TokenType.SEMICOLON) {
+                tokens.get(0).type() == TokenType.TYPE &&
+                tokens.get(1).type() == TokenType.VARIABLE &&
+                tokens.get(2).type() == TokenType.EQUALS &&
+                tokens.get(3).type() == TokenType.VALUE &&
+                tokens.get(4).type() == TokenType.SEMICOLON) {
             return true;
         }
 
         return (tokens.size() == 4 &&
-                (tokens.get(0).getType() == TokenType.VARIABLE || tokens.get(0).getType() == TokenType.VALUE) &&
-                (tokens.get(1).getType() == TokenType.PLUS ||
-                        tokens.get(1).getType() == TokenType.MINUS ||
-                        tokens.get(1).getType() == TokenType.MULTIPLY ||
-                        tokens.get(1).getType() == TokenType.DIVIDE) &&
-                (tokens.get(2).getType() == TokenType.VARIABLE || tokens.get(2).getType() == TokenType.VALUE) &&
-                tokens.get(3).getType() == TokenType.SEMICOLON);
+                (tokens.get(0).type() == TokenType.VARIABLE || tokens.get(0).type() == TokenType.VALUE) &&
+                (tokens.get(1).type() == TokenType.PLUS ||
+                        tokens.get(1).type() == TokenType.MINUS ||
+                        tokens.get(1).type() == TokenType.MULTIPLY ||
+                        tokens.get(1).type() == TokenType.DIVIDE) &&
+                (tokens.get(2).type() == TokenType.VARIABLE || tokens.get(2).type() == TokenType.VALUE) &&
+                tokens.get(3).type() == TokenType.SEMICOLON);
     }
 
 
@@ -108,37 +108,37 @@ public class CustomLexer {
         StringBuilder missingPart = new StringBuilder(" Token(s) missing: ");
         StringBuilder incorrectPlaceTokens = new StringBuilder(" Token(s) in incorrect place: ");
 
-        if ((!tokens.isEmpty() && tokens.get(0).getType() != TokenType.TYPE)) {
+        if ((!tokens.isEmpty() && tokens.get(0).type() != TokenType.TYPE)) {
             incorrectPlaceTokens.append("TYPE ");
         }
-        if (!Arrays.toString(tokens.stream().map(Token::getType).toArray()).contains("TYPE")) {
+        if (!Arrays.toString(tokens.stream().map(Token::type).toArray()).contains("TYPE")) {
             missingPart.append("TYPE ");
         }
 
-        if ((tokens.size() > 1 && tokens.get(1).getType() != TokenType.VARIABLE)) {
+        if ((tokens.size() > 1 && tokens.get(1).type() != TokenType.VARIABLE)) {
             incorrectPlaceTokens.append("VARIABLE ");
         }
-        if (!Arrays.toString(tokens.stream().map(Token::getType).toArray()).contains("VARIABLE")) {
+        if (!Arrays.toString(tokens.stream().map(Token::type).toArray()).contains("VARIABLE")) {
             missingPart.append("VARIABLE ");
         }
-        if ((tokens.size() > 2 && tokens.get(2).getType() != TokenType.EQUALS)) {
+        if ((tokens.size() > 2 && tokens.get(2).type() != TokenType.EQUALS)) {
             incorrectPlaceTokens.append("EQUALS ");
         }
-        if (!Arrays.toString(tokens.stream().map(Token::getType).toArray()).contains("EQUALS")) {
+        if (!Arrays.toString(tokens.stream().map(Token::type).toArray()).contains("EQUALS")) {
             missingPart.append("EQUALS ");
         }
 
-        if (!Arrays.toString(tokens.stream().map(Token::getType).toArray()).contains("VALUE")) {
+        if (!Arrays.toString(tokens.stream().map(Token::type).toArray()).contains("VALUE")) {
             missingPart.append("VALUE ");
         }
-        if ((tokens.size() > 3 && tokens.get(3).getType() != TokenType.VALUE)) {
+        if ((tokens.size() > 3 && tokens.get(3).type() != TokenType.VALUE)) {
             incorrectPlaceTokens.append("VALUE ");
         }
 
-        if (!Arrays.toString(tokens.stream().map(Token::getType).toArray()).contains("SEMICOLON")) {
+        if (!Arrays.toString(tokens.stream().map(Token::type).toArray()).contains("SEMICOLON")) {
             missingPart.append("SEMICOLON ");
         }
-        if ((tokens.size() > 4 && tokens.get(4).getType() != TokenType.SEMICOLON)) {
+        if ((tokens.size() > 4 && tokens.get(4).type() != TokenType.SEMICOLON)) {
             incorrectPlaceTokens.append("SEMICOLON");
         }
 
@@ -156,26 +156,26 @@ public class CustomLexer {
 
         for (int i = 0; i < tokens.size(); i++) {
             Token currentToken = tokens.get(i);
-            if (currentToken.getType() == TokenType.VARIABLE && i < tokens.size() - 2 &&
-                    tokens.get(i + 1).getType() == TokenType.EQUALS &&
-                    (tokens.get(i + 2).getType() == TokenType.VALUE || tokens.get(i + 2).getType() == TokenType.VARIABLE)) {
+            if (currentToken.type() == TokenType.VARIABLE && i < tokens.size() - 2 &&
+                    tokens.get(i + 1).type() == TokenType.EQUALS &&
+                    (tokens.get(i + 2).type() == TokenType.VALUE || tokens.get(i + 2).type() == TokenType.VARIABLE)) {
                 i += 2;
-            } else if (currentToken.getType() == TokenType.VARIABLE || currentToken.getType() == TokenType.VALUE) {
+            } else if (currentToken.type() == TokenType.VARIABLE || currentToken.type() == TokenType.VALUE) {
                 int operand1;
-                if (currentToken.getType() == TokenType.VALUE) {
-                    operand1 = Integer.parseInt(currentToken.getValue());
+                if (currentToken.type() == TokenType.VALUE) {
+                    operand1 = Integer.parseInt(currentToken.value());
                 } else {
-                    operand1 = getValueOfVariable(currentToken.getValue(), tokens);
+                    operand1 = getValueOfVariable(currentToken.value(), tokens);
                 }
                 Token operatorToken = tokens.get(++i); // Move to the operator
                 int operand2;
-                if (tokens.get(++i).getType() == TokenType.VALUE) {
-                    operand2 = Integer.parseInt(tokens.get(i).getValue()); // Next token is the second operand
+                if (tokens.get(++i).type() == TokenType.VALUE) {
+                    operand2 = Integer.parseInt(tokens.get(i).value()); // Next token is the second operand
                 } else {
 
-                    operand2 = getValueOfVariable(tokens.get(i).getValue(), tokens);
+                    operand2 = getValueOfVariable(tokens.get(i).value(), tokens);
                 }
-                switch (operatorToken.getType()) {
+                switch (operatorToken.type()) {
                     case PLUS:
                         result = operand1 + operand2;
                         break;
@@ -200,9 +200,9 @@ public class CustomLexer {
 
     private static int getValueOfVariable(String variableName, List<Token> tokens) {
         for (Token token : tokens) {
-            if (token.getType() == TokenType.VARIABLE && token.getValue().equals(variableName)) {
+            if (token.type() == TokenType.VARIABLE && token.value().equals(variableName)) {
 
-                return Integer.parseInt(tokens.get(tokens.indexOf(token) + 2).getValue());
+                return Integer.parseInt(tokens.get(tokens.indexOf(token) + 2).value());
             }
         }
         throw new IllegalArgumentException("Variable '" + variableName + "' not found");
@@ -216,7 +216,7 @@ public class CustomLexer {
 
         StringBuilder expressionBuilder = new StringBuilder();
         for (int i = startIndex; i <= endIndex; i++) {
-            expressionBuilder.append(tokens.get(i).getValue());
+            expressionBuilder.append(tokens.get(i).value());
         }
         String expression = expressionBuilder.toString();
 
