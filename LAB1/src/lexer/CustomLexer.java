@@ -66,18 +66,13 @@ public class CustomLexer {
     }
 
     private static TokenType getOperationType(String token) {
-        switch (token) {
-            case "+":
-                return TokenType.PLUS;
-            case "-":
-                return TokenType.MINUS;
-            case "*":
-                return TokenType.MULTIPLY;
-            case "/":
-                return TokenType.DIVIDE;
-            default:
-                throw new IllegalArgumentException("Invalid operation token: " + token);
-        }
+        return switch (token) {
+            case "+" -> TokenType.PLUS;
+            case "-" -> TokenType.MINUS;
+            case "*" -> TokenType.MULTIPLY;
+            case "/" -> TokenType.DIVIDE;
+            default -> throw new IllegalArgumentException("Invalid operation token: " + token);
+        };
     }
 
     private static Pattern getCombinedPattern(List<String> validTypes) {

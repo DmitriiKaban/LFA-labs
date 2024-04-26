@@ -1,6 +1,6 @@
 package lexer;
 
-enum TokenType {
+public enum TokenType {
     TYPE,
     VARIABLE,
     EQUALS,

@@ -13,19 +13,10 @@ public class ChomskyNormalForm extends Grammar {
 
     public void convertToCNF() {
 
-        // Step 1: Remove ε (epsilon) productions
         removeEpsilonProductions();
-
-        // Step 2: Remove unit productions
         removeUnitProductions();
-
-        // Step 3: Eliminate inaccessible states
         eliminateInaccessibleStates();
-
-        // Step 4: Eliminate non-productive rules
         eliminateNonProductiveRules();
-
-        // Step 5: Convert to Chomsky Normal Form
         convertToChomskyNormalForm();
     }
 
@@ -36,7 +27,6 @@ public class ChomskyNormalForm extends Grammar {
         int newNonTerminalCounter = 0;
 
         Map<String, List<String>> updatedRules = new HashMap<>(getRules());
-
 
         for (Map.Entry<String, List<String>> entry : updatedRules.entrySet()) {
             String fromState = entry.getKey();
@@ -147,7 +137,6 @@ public class ChomskyNormalForm extends Grammar {
             }
         }
 
-        // Update the rules with the modified ones
         setRules(updatedRules);
     }
 
@@ -198,14 +187,12 @@ public class ChomskyNormalForm extends Grammar {
             }
         }
 
-        // Update the rules with the modified ones
         setRules(updatedRules);
     }
 
     public void removeUnitProductions() {
         Map<String, List<String>> updatedRules = new HashMap<>(getRules());
 
-        // Step 3: Repeat Step 1 and 2 until all unit productions are removed
         boolean changed;
         do {
             changed = false;
@@ -243,11 +230,10 @@ public class ChomskyNormalForm extends Grammar {
             }
         } while (changed);
 
-        // Update the rules with the modified ones
         setRules(updatedRules);
     }
 
-    // epsilon production -> when the right side is empty
+
     public void removeEpsilonProductions() {
         Map<String, List<String>> updatedRules = new HashMap<>(getRules());
 
@@ -306,14 +292,14 @@ public class ChomskyNormalForm extends Grammar {
         }
 
         char currentChar = remaining.charAt(index);
-        if (currentChar == 'ε') {
-            generateCombinations(prefix, remaining, index + 1, combinations); // Exclude epsilon
-            generateCombinations(prefix + currentChar, remaining, index + 1, combinations); // Include epsilon
+        if (currentChar == ' ') {
+            generateCombinations(prefix, remaining, index + 1, combinations);
+
+            generateCombinations(prefix + currentChar, remaining, index + 1, combinations);
         } else {
-            generateCombinations(prefix + currentChar, remaining, index + 1, combinations); // Include current character
+            generateCombinations(prefix + currentChar, remaining, index + 1, combinations);
         }
     }
-
 
 
     // Method to replicate productions

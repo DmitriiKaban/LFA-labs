@@ -1,4 +1,3 @@
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +33,7 @@ public class ChomskyNormalFormTest {
     public void testRemoveEpsilonProductions() {
 
         chomskyNormalForm.removeEpsilonProductions();
+        System.out.println(chomskyNormalForm.getRules());
         assertTrue(chomskyNormalForm.getNonTerminals().containsAll(Set.of("S", "A", "B", "C")));
         assertTrue(chomskyNormalForm.getTerminals().containsAll(Set.of("a", "b")));
         assertEquals(5, chomskyNormalForm.getRules().size());

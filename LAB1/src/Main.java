@@ -1,3 +1,5 @@
+
+import lexer.ASTNode;
 import lexer.CustomLexer;
 import lexer.Token;
 
@@ -12,7 +14,39 @@ public class Main {
 //        lab2();
 //        lab3();
 //        lab4();
-        lab5();
+//        lab5();
+        lab6();
+    }
+
+    private static void lab6() {
+        String code1 = "RealMadrid myVariable = 10;";
+        String code2 = "myVariable + 20;";
+
+        System.out.println("Input Code:");
+        System.out.println(code1);
+
+        List<Token> tokens1 = CustomLexer.lex(code1);
+        ASTNode ast1 = ast.ASTBuilder.buildAST(tokens1);
+        System.out.println("AST:");
+        printAST(ast1);
+        System.out.println();
+
+        System.out.println("Input Code:");
+        System.out.println(code2);
+        List<Token> tokens2 = CustomLexer.lex(code2);
+        ASTNode ast2 = ast.ASTBuilder.buildAST(tokens2);
+        System.out.println("AST:");
+        printAST(ast2);
+    }
+
+    private static void printAST(ASTNode node) {
+        if (node == null) {
+            return;
+        }
+
+        System.out.println(node);
+        printAST(node.getLeftChild());
+        printAST(node.getRightChild());
     }
 
     private static void lab5() {
@@ -134,15 +168,14 @@ public class Main {
     private static void lab3() {
 
         String code = "RealMadrid a = 5;" +
-                "RealMadrid  9; " +
+                "RealMadrid b =  9; " +
                 "Chelsea c = 15;" +
                 "a + 2;" +
                 "c - b;" +
                 "a * b;" +
                 "a - b;";
-        CustomLexer lexer = new CustomLexer();
-        List<Token> tokens = lexer.lex(code);
 
+        List<Token> tokens = CustomLexer.lex(code);
 
         CustomLexer.evaluateAndPrint(code);
 
